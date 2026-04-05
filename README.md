@@ -36,47 +36,45 @@ Add one of the following to your GitHub profile README to display the visitor co
 
 ## Setup
 
-### 1. Generate digit sprites (one-time)
+1. Generate digit sprites (one-time):
 
-Download the GIF sprites and regenerate `supabase/functions/counter/digits.ts`:
+   ```sh
+   bash scripts/encode-digits.sh
+   ```
 
-```sh
-bash scripts/encode-digits.sh
-```
+2. Log in to Supabase:
 
-### 2. Log in to Supabase
+   ```sh
+   supabase login
+   ```
 
-```sh
-supabase login
-```
+3. Link your project:
 
-### 3. Link your project
+   ```sh
+   supabase link --project-ref <project-ref>
+   ```
 
-```sh
-supabase link --project-ref <project-ref>
-```
+4. Apply the database migration:
 
-### 4. Apply the database migration
+   ```sh
+   supabase db push
+   ```
 
-```sh
-supabase db push
-```
+5. Deploy the Edge Function:
 
-### 5. Deploy the Edge Function
+   ```sh
+   supabase functions deploy counter --no-verify-jwt
+   ```
 
-```sh
-supabase functions deploy counter --no-verify-jwt
-```
+   > `--no-verify-jwt` makes the endpoint public, which is required for embedding without authentication.
 
-> `--no-verify-jwt` makes the endpoint public, which is required for embedding without authentication.
+6. Verify the endpoint:
 
-### 6. Verify the endpoint
+   ```sh
+   curl -i https://<project-ref>.supabase.co/functions/v1/counter
+   ```
 
-```sh
-curl -i https://<project-ref>.supabase.co/functions/v1/counter
-```
-
-Expect `HTTP/2 200` and `content-type: image/svg+xml`.
+   Expect `HTTP/2 200` and `content-type: image/svg+xml`.
 
 ---
 
