@@ -1,5 +1,2 @@
-# Supabase CLI project configuration
-# Phase 1: placeholder — replace "cgi-counter" with your real project ref after running:
-#   supabase link --project-ref <project-ref>
-[project]
+# A string used to distinguish different Supabase projects on the same host. Defaults to the working directory name when running `supabase init`.
 project_id = "cgi-counter"
