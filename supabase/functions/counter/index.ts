@@ -8,38 +8,34 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Digit sprite images (16×23 px GIFs)
 // Source: http://sozai.akuseru-design.com/img_num/num018/white/<digit>.gif
 //
-// To generate the base64 values, download each GIF and encode it:
-//   for i in $(seq 0 9); do
-//     curl -o ${i}.gif http://sozai.akuseru-design.com/img_num/num018/white/${i}.gif
-//   done
-//   for i in $(seq 0 9); do echo "\"${i}\": \"data:image/gif;base64,$(base64 -i ${i}.gif | tr -d '\n')\","; done
-//
-// Note: data URIs are used so that the SVG is self-contained when embedded in
-// a GitHub profile README via an <img> tag (GitHub's CSP blocks external URLs
-// inside SVG <image> elements).
+// Images are fetched from the source URL on first use and cached in memory for
+// subsequent warm invocations. Data URIs are used so that the SVG is
+// self-contained when embedded in a GitHub profile README via an <img> tag
+// (GitHub's CSP blocks external URLs inside SVG <image> elements).
 // ---------------------------------------------------------------------------
-const DIGIT_IMAGES: Record<string, string> = {
-  // http://sozai.akuseru-design.com/img_num/num018/white/0.gif
-  "0": "data:image/gif;base64,<base64-encoded-0.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/1.gif
-  "1": "data:image/gif;base64,<base64-encoded-1.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/2.gif
-  "2": "data:image/gif;base64,<base64-encoded-2.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/3.gif
-  "3": "data:image/gif;base64,<base64-encoded-3.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/4.gif
-  "4": "data:image/gif;base64,<base64-encoded-4.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/5.gif
-  "5": "data:image/gif;base64,<base64-encoded-5.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/6.gif
-  "6": "data:image/gif;base64,<base64-encoded-6.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/7.gif
-  "7": "data:image/gif;base64,<base64-encoded-7.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/8.gif
-  "8": "data:image/gif;base64,<base64-encoded-8.gif>",
-  // http://sozai.akuseru-design.com/img_num/num018/white/9.gif
-  "9": "data:image/gif;base64,<base64-encoded-9.gif>",
-};
+const DIGIT_IMAGE_BASE_URL =
+  "http://sozai.akuseru-design.com/img_num/num018/white";
+
+// Module-level cache: populated on first request, reused across warm invocations
+const digitImageCache = new Map<string, string>();
+
+async function getDigitDataUri(digit: string): Promise<string> {
+  if (digitImageCache.has(digit)) {
+    return digitImageCache.get(digit)!;
+  }
+  const url = `${DIGIT_IMAGE_BASE_URL}/${digit}.gif`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch digit image for "${digit}" from ${url}: HTTP ${res.status}`,
+    );
+  }
+  const buffer = await res.arrayBuffer();
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  const dataUri = `data:image/gif;base64,${base64}`;
+  digitImageCache.set(digit, dataUri);
+  return dataUri;
+}
 
 const DIGIT_WIDTH = 16;
 const DIGIT_HEIGHT = 23;
@@ -71,13 +67,15 @@ Deno.serve(async (_req: Request): Promise<Response> => {
   // ---------------------------------------------------------------------------
   const digits = String(count).padStart(DIGIT_COUNT, "0").split("");
 
-  const imageElements = digits
-    .map((digit, index) => {
-      const href = DIGIT_IMAGES[digit] ?? DIGIT_IMAGES["0"];
-      const x = index * DIGIT_WIDTH;
-      return `<image x="${x}" y="0" width="${DIGIT_WIDTH}" height="${DIGIT_HEIGHT}" href="${href}"/>`;
-    })
-    .join("\n  ");
+  const imageElements = (
+    await Promise.all(
+      digits.map(async (digit, index) => {
+        const href = await getDigitDataUri(digit);
+        const x = index * DIGIT_WIDTH;
+        return `<image x="${x}" y="0" width="${DIGIT_WIDTH}" height="${DIGIT_HEIGHT}" href="${href}"/>`;
+      }),
+    )
+  ).join("\n  ");
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${SVG_WIDTH}" height="${SVG_HEIGHT}">
   ${imageElements}
