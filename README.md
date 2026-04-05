@@ -34,33 +34,39 @@ Add one of the following to your GitHub profile README to display the visitor co
 
 ---
 
+## First-Time Setup Only
+
+Populate the digit sprite images once, then commit the generated file.
+
+Run the helper script to download the GIFs and regenerate `supabase/functions/counter/digits.ts`:
+
+```sh
+bash scripts/encode-digits.sh
+```
+
+---
+
 ## Setup
 
-1. Generate digit sprites (one-time):
-
-   ```sh
-   bash scripts/encode-digits.sh
-   ```
-
-2. Log in to Supabase:
+1. Log in to Supabase:
 
    ```sh
    supabase login
    ```
 
-3. Link your project:
+2. Link your project:
 
    ```sh
    supabase link --project-ref <project-ref>
    ```
 
-4. Apply the database migration:
+3. Apply the database migration:
 
    ```sh
    supabase db push
    ```
 
-5. Deploy the Edge Function:
+4. Deploy the Edge Function:
 
    ```sh
    supabase functions deploy counter --no-verify-jwt
@@ -68,7 +74,7 @@ Add one of the following to your GitHub profile README to display the visitor co
 
    > `--no-verify-jwt` makes the endpoint public, which is required for embedding without authentication.
 
-6. Verify the endpoint:
+5. Verify the endpoint:
 
    ```sh
    curl -i https://<project-ref>.supabase.co/functions/v1/counter
