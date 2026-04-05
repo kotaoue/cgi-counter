@@ -1,0 +1,5 @@
+# Supabase CLI project configuration
+# Phase 1: placeholder — replace "cgi-counter" with your real project ref after running:
+#   supabase link --project-ref <project-ref>
+[project]
+project_id = "cgi-counter"

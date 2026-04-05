@@ -1,0 +1,14 @@
+# Environment variables — never commit real credentials
+.env
+
+# Supabase CLI temporary files
+supabase/.temp/
+
+# macOS
+.DS_Store
+
+# JetBrains IDEs
+.idea/
+
+# Visual Studio Code
+.vscode/
