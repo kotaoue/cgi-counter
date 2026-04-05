@@ -92,3 +92,7 @@ bash scripts/encode-digits.sh
 - **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template (← current)
 - **Phase 2** — CI/CD: automated deployment via GitHub Actions
 - **Phase 3** — Bot filtering & rate limiting: suppress fraudulent counts
+
+## Links
+
+- [超シンプル素材集](http://sozai.akuseru-design.com/)
