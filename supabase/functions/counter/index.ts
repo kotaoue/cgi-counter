@@ -7,13 +7,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Number of zero-padded digits shown in the counter (e.g. 000042)
 const COUNTER_DISPLAY_DIGITS = 6;
 
-// Badge layout: total width 100px, label section 54px, count section 46px
-const SVG_WIDTH = 100;
+// Badge layout: count-only badge
+const SVG_WIDTH = 60;
 const SVG_HEIGHT = 20;
-const LABEL_SECTION_WIDTH = 54;
-const COUNT_SECTION_WIDTH = SVG_WIDTH - LABEL_SECTION_WIDTH;
-const LABEL_X_CENTER = Math.round(LABEL_SECTION_WIDTH / 2);
-const COUNT_X_CENTER = LABEL_SECTION_WIDTH + Math.round(COUNT_SECTION_WIDTH / 2);
+const COUNT_X_CENTER = Math.round(SVG_WIDTH / 2);
 
 Deno.serve(async (_req: Request): Promise<Response> => {
   // ---------------------------------------------------------------------------
@@ -38,7 +35,6 @@ Deno.serve(async (_req: Request): Promise<Response> => {
   //    Zero-pad to DIGIT_COUNT digits for consistent width display.
   //    Using only SVG primitives ensures compatibility with GitHub's camo proxy.
   // ---------------------------------------------------------------------------
-  const label = "visitors";
   const countText = String(count).padStart(COUNTER_DISPLAY_DIGITS, "0");
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SVG_WIDTH}" height="${SVG_HEIGHT}">
@@ -46,13 +42,9 @@ Deno.serve(async (_req: Request): Promise<Response> => {
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <rect rx="3" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="#555"/>
-  <rect rx="3" x="${LABEL_SECTION_WIDTH}" width="${COUNT_SECTION_WIDTH}" height="${SVG_HEIGHT}" fill="#4c1"/>
-  <rect x="${LABEL_SECTION_WIDTH}" width="4" height="${SVG_HEIGHT}" fill="#4c1"/>
+  <rect rx="3" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="#4c1"/>
   <rect rx="3" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="url(#s)"/>
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-    <text x="${LABEL_X_CENTER}" y="15" fill="#010101" fill-opacity=".3">${label}</text>
-    <text x="${LABEL_X_CENTER}" y="14">${label}</text>
     <text x="${COUNT_X_CENTER}" y="15" fill="#010101" fill-opacity=".3">${countText}</text>
     <text x="${COUNT_X_CENTER}" y="14">${countText}</text>
   </g>
