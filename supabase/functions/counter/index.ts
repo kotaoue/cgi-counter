@@ -3,13 +3,14 @@
 // Phase 3: add bot-filtering and rate limiting
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { DIGIT_DATA_URIS } from "./digits.ts";
 
-const DIGIT_WIDTH = 16;
-const DIGIT_HEIGHT = 23;
-const DIGIT_COUNT = 6;
-const SVG_WIDTH = DIGIT_WIDTH * DIGIT_COUNT; // 96
-const SVG_HEIGHT = DIGIT_HEIGHT; // 23
+// Number of zero-padded digits shown in the counter (e.g. 000042)
+const COUNTER_DISPLAY_DIGITS = 6;
+
+// Badge layout: count-only badge
+const SVG_WIDTH = 60;
+const SVG_HEIGHT = 20;
+const COUNT_X_CENTER = Math.round(SVG_WIDTH / 2);
 
 Deno.serve(async (_req: Request): Promise<Response> => {
   // ---------------------------------------------------------------------------
@@ -30,29 +31,31 @@ Deno.serve(async (_req: Request): Promise<Response> => {
   const count: bigint | number = data as bigint | number;
 
   // ---------------------------------------------------------------------------
-  // 2. Build SVG using digit-sprite images
-  //    Zero-pad to DIGIT_COUNT digits, then map each character to an <image>.
+  // 2. Build SVG using pure text elements (no embedded images/data URIs)
+  //    Zero-pad to DIGIT_COUNT digits for consistent width display.
+  //    Using only SVG primitives ensures compatibility with GitHub's camo proxy.
   // ---------------------------------------------------------------------------
-  const digits = String(count).padStart(DIGIT_COUNT, "0").split("");
+  const countText = String(count).padStart(COUNTER_DISPLAY_DIGITS, "0");
 
-  const imageElements = digits
-    .map((digit, index) => {
-      const href = DIGIT_DATA_URIS[digit];
-      const x = index * DIGIT_WIDTH;
-      return `<image x="${x}" y="0" width="${DIGIT_WIDTH}" height="${DIGIT_HEIGHT}" href="${href}"/>`;
-    })
-    .join("\n  ");
-
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${SVG_WIDTH}" height="${SVG_HEIGHT}">
-  ${imageElements}
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SVG_WIDTH}" height="${SVG_HEIGHT}">
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <rect rx="3" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="#4c1"/>
+  <rect rx="3" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="url(#s)"/>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+    <text x="${COUNT_X_CENTER}" y="15" fill="#010101" fill-opacity=".3">${countText}</text>
+    <text x="${COUNT_X_CENTER}" y="14">${countText}</text>
+  </g>
 </svg>`;
 
   return new Response(svg, {
     headers: {
-      "Content-Type": "image/svg+xml",
-      // Disable caching so every page load increments the counter
-      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Content-Type": "image/svg+xml; charset=utf-8",
+      // public + max-age=0 allows GitHub's camo proxy to cache and revalidate,
+      // while still incrementing on each real page load.
+      "Cache-Control": "public, max-age=0, must-revalidate",
     },
   });
 });
