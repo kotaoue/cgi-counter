@@ -51,7 +51,23 @@ Example:
    supabase db push
    ```
 
-4. Deploy the Edge Function:
+4. Populate the digit sprite images:
+
+   Run the helper script to download the GIFs and regenerate `supabase/functions/counter/digits.ts`:
+
+   ```sh
+   bash scripts/encode-digits.sh
+   ```
+
+   Then commit the updated file:
+
+   ```sh
+   git add supabase/functions/counter/digits.ts
+   git commit -m "chore: embed digit sprite data URIs"
+   git push
+   ```
+
+5. Deploy the Edge Function:
 
    ```sh
    supabase functions deploy counter --no-verify-jwt
@@ -59,7 +75,7 @@ Example:
 
    > For GitHub profile `<img>` usage, deploy as a public endpoint (`--no-verify-jwt`).
 
-5. Verify the endpoint returns 200:
+6. Verify the endpoint returns 200:
 
    ```sh
    curl -i https://<project-ref>.supabase.co/functions/v1/counter
@@ -67,7 +83,7 @@ Example:
 
    > Expect `HTTP/2 200` and `content-type: image/svg+xml`.
 
-6. Add the `<img>` tag to your profile README:
+7. Add the `<img>` tag to your profile README:
 
    ```markdown
    ![visitor count](<endpoint-url>)
