@@ -1,17 +1,25 @@
-# Phase 2 placeholder — deployment workflow
-# This workflow will be fully implemented in Phase 2.
-name: Deploy
+name: Deploy Supabase Functions
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions: {}
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     steps:
-      # To be implemented in Phase 2
-      - run: echo "Deploy step coming in Phase 2"
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Apply DB migrations
+        run: supabase db push --project-ref $SUPABASE_PROJECT_REF
+
+      - name: Deploy Edge Function
+        run: supabase functions deploy counter --no-verify-jwt --project-ref $SUPABASE_PROJECT_REF
