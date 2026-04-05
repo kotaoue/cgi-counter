@@ -1,0 +1,17 @@
+# Phase 2 placeholder — deployment workflow
+# This workflow will be fully implemented in Phase 2.
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      # To be implemented in Phase 2
+      - run: echo "Deploy step coming in Phase 2"

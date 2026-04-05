@@ -1,0 +1,17 @@
+# Environment variables — never commit real credentials
+.env
+
+# Supabase CLI temporary files
+supabase/.temp/
+
+# Downloaded digit GIF source files (base64 data is embedded in digits.ts)
+supabase/functions/counter/assets/*.gif
+
+# macOS
+.DS_Store
+
+# JetBrains IDEs
+.idea/
+
+# Visual Studio Code
+.vscode/
