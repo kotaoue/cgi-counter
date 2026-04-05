@@ -2,7 +2,8 @@
 
 [![Test](../../actions/workflows/test.yaml/badge.svg)](../../actions/workflows/test.yaml)
 
-A visitor counter for your GitHub profile, powered by Supabase Edge Functions.
+A visitor counter for your GitHub profile, powered by [Supabase Edge Functions](https://supabase.com/docs/guides/functions).  
+Each page view increments a PostgreSQL counter and returns an SVG image composed of retro digit sprites.
 
 ---
 
@@ -11,16 +12,10 @@ A visitor counter for your GitHub profile, powered by Supabase Edge Functions.
 Add the following to your GitHub profile README to display the visitor counter:
 
 ```markdown
-![visitor count](<endpoint-url>)
-```
-
-> Find `<endpoint-url>` in the Supabase dashboard under Edge Functions > counter.
-
-Example:
-
-```markdown
 ![visitor count](https://<project-ref>.supabase.co/functions/v1/counter)
 ```
+
+> Find `<project-ref>` in the Supabase dashboard under **Settings > General**.
 
 ---
 
@@ -31,59 +26,49 @@ Example:
 
 ---
 
-## First-Time Setup Only
+## Setup
 
-Populate the digit sprite images once, then commit the generated file.
+### 1. Generate digit sprites (one-time)
 
-Run the helper script to download the GIFs and regenerate `supabase/functions/counter/digits.ts`:
+Download the GIF sprites and regenerate `supabase/functions/counter/digits.ts`:
 
 ```sh
 bash scripts/encode-digits.sh
 ```
 
----
+### 2. Log in to Supabase
 
-## Setup
+```sh
+supabase login
+```
 
-1. Log in to Supabase:
+### 3. Link your project
 
-   ```sh
-   supabase login
-   ```
+```sh
+supabase link --project-ref <project-ref>
+```
 
-2. Link your project (find the Reference ID under Settings > General):
+### 4. Apply the database migration
 
-   ```sh
-   supabase link --project-ref <project-ref>
-   ```
+```sh
+supabase db push
+```
 
-3. Apply the database migration:
+### 5. Deploy the Edge Function
 
-   ```sh
-   supabase db push
-   ```
+```sh
+supabase functions deploy counter --no-verify-jwt
+```
 
-4. Deploy the Edge Function:
+> `--no-verify-jwt` makes the endpoint public, which is required for `<img>` embeds in GitHub profiles.
 
-   ```sh
-   supabase functions deploy counter --no-verify-jwt
-   ```
+### 6. Verify the endpoint
 
-   > For GitHub profile `<img>` usage, deploy as a public endpoint (`--no-verify-jwt`).
+```sh
+curl -i https://<project-ref>.supabase.co/functions/v1/counter
+```
 
-5. Verify the endpoint returns 200:
-
-   ```sh
-   curl -i https://<project-ref>.supabase.co/functions/v1/counter
-   ```
-
-   > Expect `HTTP/2 200` and `content-type: image/svg+xml`.
-
-6. Add the `<img>` tag to your profile README:
-
-   ```markdown
-   ![visitor count](<endpoint-url>)
-   ```
+Expect `HTTP/2 200` and `content-type: image/svg+xml`.
 
 ---
 
@@ -93,6 +78,9 @@ bash scripts/encode-digits.sh
 - **Phase 2** — CI/CD: automated deployment via GitHub Actions
 - **Phase 3** — Bot filtering & rate limiting: suppress fraudulent counts
 
-## Links
+---
 
-- [超シンプル素材集](http://sozai.akuseru-design.com/)
+## Credits
+
+Digit sprites: [超シンプル素材集](http://sozai.akuseru-design.com/)
+
