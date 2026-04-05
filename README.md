@@ -54,10 +54,20 @@ Example:
 4. Deploy the Edge Function:
 
    ```sh
-   supabase functions deploy counter
+   supabase functions deploy counter --no-verify-jwt
    ```
 
-5. Add the `<img>` tag to your profile README:
+   > For GitHub profile `<img>` usage, deploy as a public endpoint (`--no-verify-jwt`).
+
+5. Verify the endpoint returns 200:
+
+   ```sh
+   curl -i https://<project-ref>.supabase.co/functions/v1/counter
+   ```
+
+   > Expect `HTTP/2 200` and `content-type: image/svg+xml`.
+
+6. Add the `<img>` tag to your profile README:
 
    ```markdown
    ![visitor count](<endpoint-url>)
