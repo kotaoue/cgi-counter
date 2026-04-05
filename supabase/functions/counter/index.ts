@@ -5,21 +5,40 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // ---------------------------------------------------------------------------
-// Digit sprite images (16×23 px each)
-// Obtain real PNGs from: http://sozai.akuseru-design.com/018-デジタル風カウンター数字-(16x23)/
-// then encode each file:  base64 -i <digit>.png | tr -d '\n'
+// Digit sprite images (16×23 px GIFs)
+// Source: http://sozai.akuseru-design.com/img_num/num018/white/<digit>.gif
+//
+// To generate the base64 values, download each GIF and encode it:
+//   for i in $(seq 0 9); do
+//     curl -o ${i}.gif http://sozai.akuseru-design.com/img_num/num018/white/${i}.gif
+//   done
+//   for i in $(seq 0 9); do echo "\"${i}\": \"data:image/gif;base64,$(base64 -i ${i}.gif | tr -d '\n')\","; done
+//
+// Note: data URIs are used so that the SVG is self-contained when embedded in
+// a GitHub profile README via an <img> tag (GitHub's CSP blocks external URLs
+// inside SVG <image> elements).
 // ---------------------------------------------------------------------------
 const DIGIT_IMAGES: Record<string, string> = {
-  "0": "data:image/png;base64,<base64-encoded-0.png>",
-  "1": "data:image/png;base64,<base64-encoded-1.png>",
-  "2": "data:image/png;base64,<base64-encoded-2.png>",
-  "3": "data:image/png;base64,<base64-encoded-3.png>",
-  "4": "data:image/png;base64,<base64-encoded-4.png>",
-  "5": "data:image/png;base64,<base64-encoded-5.png>",
-  "6": "data:image/png;base64,<base64-encoded-6.png>",
-  "7": "data:image/png;base64,<base64-encoded-7.png>",
-  "8": "data:image/png;base64,<base64-encoded-8.png>",
-  "9": "data:image/png;base64,<base64-encoded-9.png>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/0.gif
+  "0": "data:image/gif;base64,<base64-encoded-0.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/1.gif
+  "1": "data:image/gif;base64,<base64-encoded-1.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/2.gif
+  "2": "data:image/gif;base64,<base64-encoded-2.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/3.gif
+  "3": "data:image/gif;base64,<base64-encoded-3.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/4.gif
+  "4": "data:image/gif;base64,<base64-encoded-4.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/5.gif
+  "5": "data:image/gif;base64,<base64-encoded-5.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/6.gif
+  "6": "data:image/gif;base64,<base64-encoded-6.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/7.gif
+  "7": "data:image/gif;base64,<base64-encoded-7.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/8.gif
+  "8": "data:image/gif;base64,<base64-encoded-8.gif>",
+  // http://sozai.akuseru-design.com/img_num/num018/white/9.gif
+  "9": "data:image/gif;base64,<base64-encoded-9.gif>",
 };
 
 const DIGIT_WIDTH = 16;
