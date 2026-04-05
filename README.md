@@ -2,21 +2,21 @@
 
 [![Test](../../actions/workflows/test.yaml/badge.svg)](../../actions/workflows/test.yaml)
 
-Supabase Edge Functions で動く GitHub プロフィール用ビジターカウンター
+A visitor counter for your GitHub profile, powered by Supabase Edge Functions.
 
 ---
 
 ## Usage
 
-GitHub プロフィールの README に以下を追加するだけで、ビジターカウンターが表示されます。
+Add the following to your GitHub profile README to display the visitor counter:
 
 ```markdown
 ![visitor count](<endpoint-url>)
 ```
 
-> `<endpoint-url>` は Supabase ダッシュボード > Edge Functions > counter で確認できます。
+> Find `<endpoint-url>` in the Supabase dashboard under Edge Functions > counter.
 
-例:
+Example:
 
 ```markdown
 ![visitor count](https://<project-ref>.supabase.co/functions/v1/counter)
@@ -33,39 +33,39 @@ GitHub プロフィールの README に以下を追加するだけで、ビジ�
 
 ## Setup
 
-1. Supabase にログイン:
+1. Log in to Supabase:
 
    ```sh
    supabase login
    ```
 
-2. プロジェクトをリンク（Reference ID は Settings > General で確認）:
+2. Link your project (find the Reference ID under Settings > General):
 
    ```sh
    supabase link --project-ref <project-ref>
    ```
 
-3. マイグレーションを適用:
+3. Apply the database migration:
 
    ```sh
    supabase db push
    ```
 
-4. Edge Function をデプロイ:
+4. Deploy the Edge Function:
 
    ```sh
    supabase functions deploy counter
    ```
 
-5. Service Role Key をシークレットとして設定:
+5. Set the Service Role Key as a secret:
 
    ```sh
    supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<key>
    ```
 
-   > ⚠️ `SUPABASE_SERVICE_ROLE_KEY` は絶対にコミットしないでください。
+   > ⚠️ Never commit `SUPABASE_SERVICE_ROLE_KEY` to the repository.
 
-6. プロフィール README に img タグを追加:
+6. Add the `<img>` tag to your profile README:
 
    ```markdown
    ![visitor count](<endpoint-url>)
@@ -75,6 +75,6 @@ GitHub プロフィールの README に以下を追加するだけで、ビジ�
 
 ## Roadmap
 
-- **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template (← 現在)
-- **Phase 2** — CI/CD: GitHub Actions によるデプロイの自動化
-- **Phase 3** — Bot filtering & rate limiting: 不正カウントの抑制
+- **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template (← current)
+- **Phase 2** — CI/CD: automated deployment via GitHub Actions
+- **Phase 3** — Bot filtering & rate limiting: suppress fraudulent counts
