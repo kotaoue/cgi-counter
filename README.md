@@ -57,17 +57,7 @@ Example:
    supabase functions deploy counter
    ```
 
-5. Set the Service Role Key as a secret:
-
-   ```sh
-   supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<key>
-   ```
-
-   > Find `<key>` in the Supabase dashboard under **Project Settings > Data API > service_role** (Secret).
-
-   > ⚠️ Never commit `SUPABASE_SERVICE_ROLE_KEY` to the repository.
-
-6. Add the `<img>` tag to your profile README:
+5. Add the `<img>` tag to your profile README:
 
    ```markdown
    ![visitor count](<endpoint-url>)
