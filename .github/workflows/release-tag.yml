@@ -12,6 +12,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - uses: kotaoue/major-tag-floater@v1
+      - uses: kotaoue/major-tag-floater@baeaf6ba381aa4b4dbd6e2675de5e648e7dc9ff2 # v1.0.1

@@ -2,25 +2,28 @@
 
 [![Test](../../actions/workflows/test.yaml/badge.svg)](../../actions/workflows/test.yaml)
 
-A visitor counter for your GitHub profile, powered by Supabase Edge Functions.
+A visitor counter for your GitHub profile, powered by [Supabase Edge Functions](https://supabase.com/docs/guides/functions).  
+Each page view increments a PostgreSQL counter and returns an SVG image composed of retro digit sprites.
 
 ---
 
 ## Usage
 
-Add the following to your GitHub profile README to display the visitor counter:
+Add one of the following to your GitHub profile README to display the visitor counter.
 
-```markdown
-![visitor count](<endpoint-url>)
-```
-
-> Find `<endpoint-url>` in the Supabase dashboard under Edge Functions > counter.
-
-Example:
+**Markdown:**
 
 ```markdown
 ![visitor count](https://<project-ref>.supabase.co/functions/v1/counter)
 ```
+
+**HTML:**
+
+```html
+<img src="https://<project-ref>.supabase.co/functions/v1/counter" alt="visitor count">
+```
+
+> Find `<project-ref>` in the Supabase dashboard under **Settings > General**.
 
 ---
 
@@ -51,7 +54,7 @@ bash scripts/encode-digits.sh
    supabase login
    ```
 
-2. Link your project (find the Reference ID under Settings > General):
+2. Link your project:
 
    ```sh
    supabase link --project-ref <project-ref>
@@ -69,21 +72,15 @@ bash scripts/encode-digits.sh
    supabase functions deploy counter --no-verify-jwt
    ```
 
-   > For GitHub profile `<img>` usage, deploy as a public endpoint (`--no-verify-jwt`).
+   > `--no-verify-jwt` makes the endpoint public, which is required for embedding without authentication.
 
-5. Verify the endpoint returns 200:
+5. Verify the endpoint:
 
    ```sh
    curl -i https://<project-ref>.supabase.co/functions/v1/counter
    ```
 
-   > Expect `HTTP/2 200` and `content-type: image/svg+xml`.
-
-6. Add the `<img>` tag to your profile README:
-
-   ```markdown
-   ![visitor count](<endpoint-url>)
-   ```
+   Expect `HTTP/2 200` and `content-type: image/svg+xml`.
 
 ---
 
@@ -93,6 +90,9 @@ bash scripts/encode-digits.sh
 - **Phase 2** — CI/CD: automated deployment via GitHub Actions
 - **Phase 3** — Bot filtering & rate limiting: suppress fraudulent counts
 
-## Links
+---
 
-- [超シンプル素材集](http://sozai.akuseru-design.com/)
+## Credits
+
+Digit sprites: [超シンプル素材集](http://sozai.akuseru-design.com/)
+
