@@ -9,10 +9,18 @@ Each page view increments a PostgreSQL counter and returns an SVG image composed
 
 ## Usage
 
-Add the following to your GitHub profile README to display the visitor counter:
+Add one of the following to your GitHub profile README to display the visitor counter.
+
+**Markdown:**
 
 ```markdown
 ![visitor count](https://<project-ref>.supabase.co/functions/v1/counter)
+```
+
+**HTML:**
+
+```html
+<img src="https://<project-ref>.supabase.co/functions/v1/counter" alt="visitor count">
 ```
 
 > Find `<project-ref>` in the Supabase dashboard under **Settings > General**.
@@ -60,7 +68,7 @@ supabase db push
 supabase functions deploy counter --no-verify-jwt
 ```
 
-> `--no-verify-jwt` makes the endpoint public, which is required for `<img>` embeds in GitHub profiles.
+> `--no-verify-jwt` makes the endpoint public, which is required for embedding without authentication.
 
 ### 6. Verify the endpoint
 
