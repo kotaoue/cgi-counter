@@ -61,16 +61,16 @@ bash scripts/encode-digits.sh
    supabase link --project-ref <project-ref>
    ```
 
-3. GitHub Secrets の設定
+3. Configure GitHub Secrets
 
-   リポジトリの **Settings > Secrets and variables > Actions** に以下のシークレットを登録します:
+   In your repository's **Settings > Secrets and variables > Actions**, add the following secrets:
 
    | Secret name | Value |
    | :--- | :--- |
-   | `SUPABASE_PROJECT_REF` | Supabase Settings > General の Reference ID |
-   | `SUPABASE_ACCESS_TOKEN` | Supabase ダッシュボード > Account > Access Tokens で発行 |
+   | `SUPABASE_PROJECT_REF` | **Reference ID** from Supabase **Settings > General** |
+   | `SUPABASE_ACCESS_TOKEN` | Personal access token from Supabase **Account > Access Tokens** |
 
-   シークレットを登録したあとは、`main` へのプッシュでワークフローが自動実行されます — 手動での `supabase db push` / `supabase functions deploy` は更新時には不要です。
+   Once the secrets are set, every push to `main` triggers the workflow automatically — manual `supabase db push` / `supabase functions deploy` are not needed for subsequent updates.
 
 4. Apply the database migration (initial setup only — CI/CD handles this for subsequent updates):
 
