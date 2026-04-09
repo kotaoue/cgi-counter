@@ -98,18 +98,13 @@ bash scripts/encode-digits.sh
 
 ## Checking Supabase Logs
 
-When the counter does not appear to be incrementing, inspect the Edge Function logs in the Supabase dashboard.
+When the counter does not appear to be incrementing, inspect the Edge Function logs:
 
-1. Open the [Supabase Dashboard](https://supabase.com/dashboard) and select your project.
-2. In the left sidebar, click **Edge Functions**.
-3. Click on the **counter** function.
-4. Open the **Logs** tab to see recent invocations.
+[Supabase Dashboard](https://supabase.com/dashboard) → Edge Functions → counter → Logs
 
-   Each request is listed with its timestamp, HTTP status, execution time, and any `console.error` / `console.log` output from the function code.
-
-5. Look for lines containing:
-   - `increment_counter error:` — a problem calling the database RPC function.
-   - `counters select failed:` — a problem reading the current count (bot path).
+Look for lines containing:
+- `increment_counter error:` — a problem calling the database RPC function.
+- `counters select failed:` — a problem reading the current count (bot path).
 
 If you prefer the Supabase CLI, stream live logs with:
 
