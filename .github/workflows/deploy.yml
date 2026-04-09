@@ -22,7 +22,7 @@ jobs:
         run: supabase link --project-ref $SUPABASE_PROJECT_REF
 
       - name: Apply DB migrations
-        run: supabase db push
+        run: supabase db push --include-all
 
       - name: Deploy Edge Function
         run: supabase functions deploy counter --no-verify-jwt
