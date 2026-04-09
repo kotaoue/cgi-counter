@@ -3,6 +3,7 @@
 // Phase 3: add bot-filtering
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { isBot } from "./bot.ts";
 
 // Number of zero-padded digits shown in the counter (e.g. 000042)
 const COUNTER_DISPLAY_DIGITS = 6;
@@ -11,40 +12,6 @@ const COUNTER_DISPLAY_DIGITS = 6;
 const SVG_WIDTH = 60;
 const SVG_HEIGHT = 20;
 const COUNT_X_CENTER = Math.round(SVG_WIDTH / 2);
-
-// Common bot / crawler User-Agent patterns — requests matching these are not counted
-const BOT_PATTERNS: RegExp[] = [
-  /bot/i,
-  /crawler/i,
-  /spider/i,
-  /scraper/i,
-  /facebookexternalhit/i,
-  /Twitterbot/i,
-  /LinkedInBot/i,
-  /WhatsApp/i,
-  /Googlebot/i,
-  /bingbot/i,
-  /Slurp/i,
-  /DuckDuckBot/i,
-  /Baiduspider/i,
-  /YandexBot/i,
-  /Sogou/i,
-  /Exabot/i,
-  /curl/i,
-  /wget/i,
-  /python-requests/i,
-  /Go-http-client/i,
-  /axios/i,
-  /libwww-perl/i,
-  /GitHub-Actions/i,
-  /camo-asset/i, // GitHub's image proxy (profile README preview)
-  /github-camo/i,
-];
-
-function isBot(userAgent: string | null): boolean {
-  if (!userAgent) return true; // no UA → treat as bot
-  return BOT_PATTERNS.some((pattern) => pattern.test(userAgent));
-}
 
 Deno.serve(async (req: Request): Promise<Response> => {
   const ua = req.headers.get("user-agent");
