@@ -1,6 +1,6 @@
 // Phase 1: Edge Function stub — increment counter and return SVG digit-sprite image
 // Phase 2: add CI/CD deployment via GitHub Actions
-// Phase 3: add bot-filtering and rate limiting
+// Phase 3: add bot-filtering
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -12,23 +12,73 @@ const SVG_WIDTH = 60;
 const SVG_HEIGHT = 20;
 const COUNT_X_CENTER = Math.round(SVG_WIDTH / 2);
 
-Deno.serve(async (_req: Request): Promise<Response> => {
+// Common bot / crawler User-Agent patterns — requests matching these are not counted
+const BOT_PATTERNS: RegExp[] = [
+  /bot/i,
+  /crawler/i,
+  /spider/i,
+  /scraper/i,
+  /facebookexternalhit/i,
+  /Twitterbot/i,
+  /LinkedInBot/i,
+  /WhatsApp/i,
+  /Googlebot/i,
+  /bingbot/i,
+  /Slurp/i,
+  /DuckDuckBot/i,
+  /Baiduspider/i,
+  /YandexBot/i,
+  /Sogou/i,
+  /Exabot/i,
+  /curl/i,
+  /wget/i,
+  /python-requests/i,
+  /Go-http-client/i,
+  /axios/i,
+  /libwww-perl/i,
+  /GitHub-Actions/i,
+  /camo-asset/i, // GitHub's image proxy (profile README preview)
+  /github-camo/i,
+];
+
+function isBot(userAgent: string | null): boolean {
+  if (!userAgent) return true; // no UA → treat as bot
+  return BOT_PATTERNS.some((pattern) => pattern.test(userAgent));
+}
+
+Deno.serve(async (req: Request): Promise<Response> => {
+  const ua = req.headers.get("user-agent");
+
   // ---------------------------------------------------------------------------
-  // 1. Increment the counter in PostgreSQL
+  // 1. Increment the counter in PostgreSQL (bots read without incrementing)
   // ---------------------------------------------------------------------------
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-  const { data, error } = await supabase.rpc("increment_counter");
+  let count: bigint | number;
 
-  if (error) {
-    console.error("increment_counter error:", error);
-    return new Response("Internal Server Error", { status: 500 });
+  if (isBot(ua)) {
+    // Bots: read the current count without incrementing
+    const { data, error } = await supabase
+      .from("counters")
+      .select("count")
+      .eq("id", "global")
+      .single();
+    if (error) {
+      console.error("counters select failed:", error.message);
+    }
+    count = data?.count ?? 0;
+  } else {
+    // Human visitors: atomically increment and return the new count
+    const { data, error } = await supabase.rpc("increment_counter");
+    if (error) {
+      console.error("increment_counter error:", error);
+      return new Response("Internal Server Error", { status: 500 });
+    }
+    count = data as bigint | number;
   }
-
-  const count: bigint | number = data as bigint | number;
 
   // ---------------------------------------------------------------------------
   // 2. Build SVG using pure text elements (no embedded images/data URIs)

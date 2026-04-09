@@ -100,4 +100,15 @@ bash scripts/encode-digits.sh
 
 - **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template ✅
 - **Phase 2** — CI/CD: automated deployment via GitHub Actions ✅
-- **Phase 3** — Bot filtering & rate limiting: suppress fraudulent counts
+- **Phase 3** — Bot filtering & RLS: suppress fraudulent counts, harden database access ✅
+
+---
+
+## Security
+
+- **Row-Level Security** is enabled on the `counters` table. The anonymous/public role can only
+  read rows. All writes (increment) go through the service role key used exclusively by the
+  Edge Function, which bypasses RLS by design.
+- **Bot filtering**: incoming requests are checked against a list of known bot/crawler
+  User-Agent patterns. Matching requests (and requests with no User-Agent) read the current
+  count without incrementing it, so only genuine human visitors affect the counter.
