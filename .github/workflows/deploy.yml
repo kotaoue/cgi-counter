@@ -18,8 +18,11 @@ jobs:
         with:
           version: latest
 
+      - name: Link Supabase project
+        run: supabase link --project-ref $SUPABASE_PROJECT_REF
+
       - name: Apply DB migrations
-        run: supabase db push --project-ref $SUPABASE_PROJECT_REF
+        run: supabase db push
 
       - name: Deploy Edge Function
-        run: supabase functions deploy counter --no-verify-jwt --project-ref $SUPABASE_PROJECT_REF
+        run: supabase functions deploy counter --no-verify-jwt
