@@ -1,8 +1,9 @@
 // Phase 1: Edge Function stub — increment counter and return SVG digit-sprite image
 // Phase 2: add CI/CD deployment via GitHub Actions
-// Phase 3: add bot-filtering and rate limiting
+// Phase 3: add bot-filtering
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { isBot } from "./bot.ts";
 
 // Number of zero-padded digits shown in the counter (e.g. 000042)
 const COUNTER_DISPLAY_DIGITS = 6;
@@ -12,23 +13,39 @@ const SVG_WIDTH = 60;
 const SVG_HEIGHT = 20;
 const COUNT_X_CENTER = Math.round(SVG_WIDTH / 2);
 
-Deno.serve(async (_req: Request): Promise<Response> => {
+Deno.serve(async (req: Request): Promise<Response> => {
+  const ua = req.headers.get("user-agent");
+
   // ---------------------------------------------------------------------------
-  // 1. Increment the counter in PostgreSQL
+  // 1. Increment the counter in PostgreSQL (bots read without incrementing)
   // ---------------------------------------------------------------------------
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-  const { data, error } = await supabase.rpc("increment_counter");
+  let count: bigint | number;
 
-  if (error) {
-    console.error("increment_counter error:", error);
-    return new Response("Internal Server Error", { status: 500 });
+  if (isBot(ua)) {
+    // Bots: read the current count without incrementing
+    const { data, error } = await supabase
+      .from("counters")
+      .select("count")
+      .eq("id", "global")
+      .single();
+    if (error) {
+      console.error("counters select failed:", error.message);
+    }
+    count = data?.count ?? 0;
+  } else {
+    // Human visitors: atomically increment and return the new count
+    const { data, error } = await supabase.rpc("increment_counter");
+    if (error) {
+      console.error("increment_counter error:", error);
+      return new Response("Internal Server Error", { status: 500 });
+    }
+    count = data as bigint | number;
   }
-
-  const count: bigint | number = data as bigint | number;
 
   // ---------------------------------------------------------------------------
   // 2. Build SVG using pure text elements (no embedded images/data URIs)
