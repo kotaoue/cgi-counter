@@ -23,8 +23,6 @@ const BOT_PATTERNS: RegExp[] = [
   /axios/i,
   /libwww-perl/i,
   /GitHub-Actions/i,
-  /camo-asset/i, // GitHub's image proxy (profile README preview)
-  /github-camo/i,
 ];
 
 export function isBot(userAgent: string | null): boolean {

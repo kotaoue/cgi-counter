@@ -96,6 +96,26 @@ bash scripts/encode-digits.sh
 
 ---
 
+## Checking Supabase Logs
+
+When the counter does not appear to be incrementing, inspect the Edge Function logs:
+
+[Supabase Dashboard](https://supabase.com/dashboard) → Edge Functions → counter → Logs
+
+Look for lines containing:
+- `increment_counter error:` — a problem calling the database RPC function.
+- `counters select failed:` — a problem reading the current count (bot path).
+
+If you prefer the Supabase CLI, stream live logs with:
+
+```sh
+supabase functions logs counter --project-ref <project-ref>
+```
+
+> Replace `<project-ref>` with the **Reference ID** found in Supabase **Settings > General**.
+
+---
+
 ## Roadmap
 
 - **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template ✅
