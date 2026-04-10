@@ -103,6 +103,7 @@ When the counter does not appear to be incrementing, inspect the Edge Function l
 [Supabase Dashboard](https://supabase.com/dashboard) → Edge Functions → counter → Logs
 
 Look for lines containing:
+
 - `increment_counter error:` — a problem calling the database RPC function.
 - `counters select failed:` — a problem reading the current count (bot path).
 
@@ -113,14 +114,6 @@ supabase functions logs counter --project-ref <project-ref>
 ```
 
 > Replace `<project-ref>` with the **Reference ID** found in Supabase **Settings > General**.
-
----
-
-## Roadmap
-
-- **Phase 1** — Skeleton: directory layout, DB migration, Edge Function stub, env template ✅
-- **Phase 2** — CI/CD: automated deployment via GitHub Actions ✅
-- **Phase 3** — Bot filtering & RLS: suppress fraudulent counts, harden database access ✅
 
 ---
 

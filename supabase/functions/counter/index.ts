@@ -1,7 +1,3 @@
-// Phase 1: Edge Function stub — increment counter and return SVG digit-sprite image
-// Phase 2: add CI/CD deployment via GitHub Actions
-// Phase 3: add bot-filtering
-
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { isBot } from "./bot.ts";
 
