@@ -6,8 +6,6 @@
 A visitor counter for your GitHub profile, powered by [Supabase Edge Functions](https://supabase.com/docs/guides/functions).  
 Each page view increments a PostgreSQL counter and returns an SVG image composed of retro digit sprites.
 
----
-
 ## Usage
 
 Add one of the following to your GitHub profile README to display the visitor counter.
@@ -26,14 +24,10 @@ Add one of the following to your GitHub profile README to display the visitor co
 
 > Find `<project-ref>` in the Supabase dashboard under **Settings > General**.
 
----
-
 ## Prerequisites
 
 - [Supabase CLI](https://supabase.com/docs/guides/cli)
 - [Deno](https://deno.land/)
-
----
 
 ## First-Time Setup Only
 
@@ -44,8 +38,6 @@ Run the helper script to download the GIFs and regenerate `supabase/functions/co
 ```sh
 bash scripts/encode-digits.sh
 ```
-
----
 
 ## Setup
 
@@ -94,8 +86,6 @@ bash scripts/encode-digits.sh
 
    Expect `HTTP/2 200` and `content-type: image/svg+xml`.
 
----
-
 ## Checking Supabase Logs
 
 When the counter does not appear to be incrementing, inspect the Edge Function logs:
@@ -114,8 +104,6 @@ supabase functions logs counter --project-ref <project-ref>
 ```
 
 > Replace `<project-ref>` with the **Reference ID** found in Supabase **Settings > General**.
-
----
 
 ## Security
 
